@@ -50,14 +50,16 @@ namespace hospital_back.Controllers
                 Name = userDto.Name,
                 Email = userDto.Email,
                 Password = userDto.Password,
-                Role = userDto.Role
-                // Outros campos do usuário
+                Role = userDto.Role,
+                CPF = userDto.CPF,
+                CellPhone = userDto.CellPhone,
+                CRM = userDto.CRM
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok("Usuário cadastrado com sucesso.");
         }
     }
 }

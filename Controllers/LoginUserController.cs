@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using hospital_back.Data;
+using hospital_back.Dto;
 using hospital_back.Enums;
 using hospital_back.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,6 @@ namespace hospital_back.Controllers
             }
 
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-            loginDto.Role = user.Role;
 
             if (user == null)
             {
@@ -49,17 +49,40 @@ namespace hospital_back.Controllers
             {
                 return BadRequest("Senha incorreta");
             }
-            if (loginDto.Role == RoleType.Doctor)
+             if (loginDto.Role == RoleType.Doctor)
             {
                 var patients = await context.Users
                     .Where(u => u.Role == RoleType.Patient)
+                    .Select(u => new PatientResult
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        CPF = u.CPF,
+                        CellPhone = u.CellPhone,
+                        Role = u.Role
+                    })
                     .ToListAsync();
 
-                return Ok(patients);
+                var doctorResult = new DoctorResult
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Role = user.Role,
+                    Patients = patients,
+                };
+
+                return Ok(doctorResult);
             }
             else if (user.Role == RoleType.Patient)
             {
-                return Ok(user);
+                var patientResult = new PatientResult
+                {
+                    Name = user.Name,
+                    CPF = user.CPF,
+                    CellPhone = user.CellPhone
+                };
+
+                return Ok(patientResult);
             }
 
             return Ok("Login bem-sucedido");

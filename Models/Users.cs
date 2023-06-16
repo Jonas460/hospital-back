@@ -19,7 +19,8 @@ namespace hospital_back.Models
         
         [Required]
         public RoleType Role { get; set; }
-        public int CRM { get; set; }
-        public int CPF { get; set; }
+        public decimal CRM { get; set; }
+        public decimal CPF { get; set; }
+        public decimal CellPhone { get; set; }
     }
 }
