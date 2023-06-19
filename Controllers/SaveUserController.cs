@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System;
 using System.Linq;
+using hospital_back.Dto;
 
 namespace hospital_back.Controllers
 {
@@ -61,5 +62,38 @@ namespace hospital_back.Controllers
 
             return Ok("Usuário cadastrado com sucesso.");
         }
+
+        [ApiController]
+        [Route("v1/edit-user")]
+        public class EditUserController : ControllerBase
+        {
+            private readonly AppDbContext context;
+
+            public EditUserController(AppDbContext dbContext)
+            {
+                context = dbContext;
+            }
+
+            [HttpPost("{id}")]
+            public async Task<IActionResult> EditUser(int id, EditUserModel model)
+            {
+                var user = await context.Users.FindAsync(id);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.Name = model.Name;
+                user.Email = model.Email;
+                user.Password = model.Password;
+                user.CellPhone = model.CellPhone;
+
+                await context.SaveChangesAsync();
+
+                return Ok("Dados salvos com sucesso!");
+            }
+        }
+
     }
 }
